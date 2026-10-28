@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: job-hunter-api
+    runtime: node
+    region: singapore
+    plan: starter
+    rootDir: .
+    buildCommand: npm install && npm run build -w server
+    preDeployCommand: npm run migrate -w server
+    startCommand: npm start -w server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        sync: false # Neon direct (non-pooler) connection string, set in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false # your Vercel URL, e.g. https://your-app.vercel.app
+      - key: STORAGE_DIR
+        value: /tmp/job-hunter-storage # replace with a persistent disk if you need files kept across deploys
+      - key: ENABLE_MOCK_SOURCE
+        value: "false"
+      - key: SCHEDULER_ENABLED
+        value: "true"
+      - key: ANTHROPIC_API_KEY
+        sync: false # optional
