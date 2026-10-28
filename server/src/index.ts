@@ -5,6 +5,7 @@ import { createPool } from './db/pool';
 import { runMigrations } from './db/migrate';
 import { createAiProvider } from './ai/provider';
 import { createLogger } from './logger';
+import { ensureLocalUser } from './auth/local-user';
 import { createDefaultRegistry } from './jobs/connectors/registry';
 import { FileStorage } from './storage';
 import { startScheduler } from './searches/scheduler';
@@ -17,6 +18,7 @@ async function main() {
 
   const applied = await runMigrations(db);
   if (applied.applied.length) logger.info({ migrations: applied.applied }, 'Applied database migrations');
+  await ensureLocalUser(db);
 
   const ctx: AppContext = {
     config,

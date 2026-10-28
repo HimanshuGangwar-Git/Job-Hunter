@@ -12,6 +12,7 @@ import { DisabledAiProvider } from '../../src/ai/provider';
 import { createLogger } from '../../src/logger';
 import { createDefaultRegistry } from '../../src/jobs/connectors/registry';
 import { FileStorage } from '../../src/storage';
+import { ensureLocalUser } from '../../src/auth/local-user';
 
 export interface Harness {
   app: FastifyInstance;
@@ -40,7 +41,6 @@ export async function createHarness(): Promise<Harness> {
     ...process.env,
     NODE_ENV: 'test',
     DATABASE_URL: process.env.DATABASE_URL,
-    JWT_SECRET: 'test-secret-that-is-long-enough-1234567890',
     STORAGE_DIR: storageRoot,
     LOG_LEVEL: 'silent',
     ENABLE_MOCK_SOURCE: 'true',
@@ -52,6 +52,7 @@ export async function createHarness(): Promise<Harness> {
   const db = createPool(config.DATABASE_URL);
   await runMigrations(db);
   await db.query(`TRUNCATE ${TABLES.join(', ')} RESTART IDENTITY CASCADE`);
+  await ensureLocalUser(db);
 
   const ctx: AppContext = {
     config,
@@ -99,4 +100,5 @@ export function multipartFile(field: string, fileName: string, contentType: stri
   return { payload, headers: { 'content-type': `multipart/form-data; boundary=${boundary}` } };
 }
 
-export const bearer = (token: string) => ({ authorization: `Bearer ${token}` });
+// Kept for readability in tests: the app is single-user, so no credentials are sent.
+export const noAuth = () => ({});

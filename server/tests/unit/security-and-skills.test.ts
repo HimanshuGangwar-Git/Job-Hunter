@@ -2,54 +2,11 @@ import { mkdtemp, readFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { hashPassword, verifyPassword } from '../../src/auth/password';
-import { issueToken, verifyToken } from '../../src/auth/tokens';
 import { detectCvType } from '../../src/cv/extract-text';
 import { canonicalSkill, findSkills } from '../../src/cv/skills';
-import { RateLimiter } from '../../src/http/rate-limit';
 import { FileStorage } from '../../src/storage';
 import { loadConfig } from '../../src/config';
 import { pickBestCv } from '../../src/matching/service';
-
-const SECRET = 'x'.repeat(40);
-
-describe('passwords', () => {
-  it('verifies the right password and rejects the wrong one', async () => {
-    const hash = await hashPassword('correct horse battery');
-    expect(hash.startsWith('scrypt$')).toBe(true);
-    expect(await verifyPassword('correct horse battery', hash)).toBe(true);
-    expect(await verifyPassword('wrong password', hash)).toBe(false);
-  });
-
-  it('salts every hash', async () => {
-    expect(await hashPassword('same')).not.toBe(await hashPassword('same'));
-  });
-
-  it('rejects malformed stored values', async () => {
-    expect(await verifyPassword('x', 'plaintext')).toBe(false);
-  });
-});
-
-describe('tokens', () => {
-  it('round-trips claims and rejects tampered or foreign-signed tokens', async () => {
-    const token = await issueToken({ sub: 'user-1', email: 'a@example.com' }, SECRET, 1);
-    expect(await verifyToken(token, SECRET)).toEqual({ sub: 'user-1', email: 'a@example.com' });
-    expect(await verifyToken(token, 'y'.repeat(40))).toBeNull();
-    expect(await verifyToken(`${token}tamper`, SECRET)).toBeNull();
-  });
-});
-
-describe('rate limiter', () => {
-  it('blocks after the limit within the window and resets after it', () => {
-    let now = 0;
-    const limiter = new RateLimiter(2, 1000, () => now);
-    limiter.consume('a');
-    limiter.consume('a');
-    expect(() => limiter.consume('a')).toThrow(/Too many attempts/);
-    now = 1500;
-    expect(() => limiter.consume('a')).not.toThrow();
-  });
-});
 
 describe('file storage', () => {
   it('refuses paths that escape the storage root', async () => {
@@ -106,15 +63,13 @@ describe('pickBestCv', () => {
 });
 
 describe('configuration', () => {
-  it('requires a strong JWT secret and a database URL', () => {
-    expect(() => loadConfig({ DATABASE_URL: 'postgres://x', JWT_SECRET: 'short' } as NodeJS.ProcessEnv)).toThrow(/JWT_SECRET/);
-    expect(() => loadConfig({ JWT_SECRET: 'x'.repeat(40) } as NodeJS.ProcessEnv)).toThrow(/DATABASE_URL/);
+  it('requires a database URL', () => {
+    expect(() => loadConfig({} as NodeJS.ProcessEnv)).toThrow(/DATABASE_URL/);
   });
 
   it('parses comma lists and boolean flags', () => {
     const config = loadConfig({
       DATABASE_URL: 'postgres://x',
-      JWT_SECRET: 'x'.repeat(40),
       GREENHOUSE_BOARDS: 'stripe, airbnb ,',
       ENABLE_MOCK_SOURCE: 'true',
     } as NodeJS.ProcessEnv);

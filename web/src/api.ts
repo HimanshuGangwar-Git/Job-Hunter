@@ -18,8 +18,6 @@ import { mockRequest } from './mocks/handlers';
 
 export const USE_MOCKS = import.meta.env.VITE_MOCK_DATA === 'true';
 
-const TOKEN_KEY = 'jh.token';
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -30,29 +28,10 @@ export class ApiError extends Error {
   }
 }
 
-export function getStoredToken(): string | null {
-  try {
-    return window.localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
-}
-
-export function setStoredToken(token: string | null): void {
-  try {
-    if (token) window.localStorage.setItem(TOKEN_KEY, token);
-    else window.localStorage.removeItem(TOKEN_KEY);
-  } catch {
-    // Storage unavailable (private mode): the session simply will not persist.
-  }
-}
-
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   if (USE_MOCKS) return mockRequest<T>(method, path, body);
 
   const headers: Record<string, string> = {};
-  const token = getStoredToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
   const res = await fetch(`/api${path}`, {
@@ -85,11 +64,7 @@ function toQuery(params: Record<string, string | number | undefined | null>): st
   return qs ? `?${qs}` : '';
 }
 
-// Auth
-export const register = (name: string, email: string, password: string) =>
-  request<{ token: string; user: User }>('POST', '/auth/register', { name, email, password });
-export const login = (email: string, password: string) =>
-  request<{ token: string; user: User }>('POST', '/auth/login', { email, password });
+// Auth (single-user: returns the local user)
 export const fetchMe = () => request<User>('GET', '/auth/me');
 
 // Profile & CVs
@@ -101,10 +76,7 @@ export async function uploadCv(file: File): Promise<CvDocument> {
   if (USE_MOCKS) return mockRequest<CvDocument>('POST', '/cvs', { fileName: file.name });
   const form = new FormData();
   form.append('file', file);
-  const headers: Record<string, string> = {};
-  const token = getStoredToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch('/api/cvs', { method: 'POST', headers, body: form });
+  const res = await fetch('/api/cvs', { method: 'POST', body: form });
   return parseResponse<CvDocument>(res);
 }
 
@@ -137,10 +109,7 @@ export const fetchAnalytics = () => request<Analytics>('GET', '/analytics');
 
 export async function downloadTailoredCv(url: string, fileName: string): Promise<void> {
   if (USE_MOCKS) return;
-  const headers: Record<string, string> = {};
-  const token = getStoredToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(url, { headers });
+  const res = await fetch(url);
   if (!res.ok) throw new ApiError('Download failed', res.status);
   const blob = await res.blob();
   const objectUrl = URL.createObjectURL(blob);

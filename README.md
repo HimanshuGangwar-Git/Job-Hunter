@@ -25,7 +25,7 @@ Job-Hunter/
 │   ├── migrations/         SQL migrations (applied in order, recorded in schema_migrations)
 │   ├── fixtures/           Offline sample jobs (fictional companies)
 │   ├── src/
-│   │   ├── auth/           Password hashing (scrypt), JWT sessions
+│   │   ├── auth/           Single local user (created on startup; no sign-in)
 │   │   ├── cv/             Text extraction (PDF/DOCX), profile extraction, skills taxonomy, CV storage
 │   │   ├── profile/        Profile and preferences
 │   │   ├── jobs/
@@ -114,7 +114,7 @@ npm install
 
 # 2. Configure the server
 cp server/.env.example server/.env
-#    Edit server/.env and set JWT_SECRET to a random string of 32+ characters.
+#    Set DATABASE_URL to your PostgreSQL database (the local one below, or your Neon direct string).
 #    ENABLE_MOCK_SOURCE=true gives you sample jobs immediately.
 
 # 3. Start the local database (keep this terminal open)
@@ -125,7 +125,7 @@ npm run migrate
 npm run dev            # API on http://localhost:4000, web on http://localhost:5173
 ```
 
-Open http://localhost:5173, create an account, then:
+Open http://localhost:5173. There is no sign-in: the app runs as a single local user. Then:
 
 1. Upload a CV on **CVs**.
 2. Review the extracted data on **Profile** and set **Preferences**.
@@ -164,7 +164,6 @@ All configuration is read from environment variables, validated at start-up. See
 | Variable                | Required | Purpose                                                              |
 |-------------------------|----------|----------------------------------------------------------------------|
 | `DATABASE_URL`          | Yes      | PostgreSQL connection string                                         |
-| `JWT_SECRET`            | Yes      | Signing key for sessions (32+ characters; must be changed in production) |
 | `ANTHROPIC_API_KEY`     | No       | Enables AI match summaries and drafting. Without it, deterministic output is used |
 | `ANTHROPIC_MODEL`       | No       | Defaults to `claude-sonnet-5-5`                                      |
 | `GREENHOUSE_BOARDS`, `LEVER_COMPANIES`, `RSS_FEEDS` | No | Public sources to read                       |
@@ -183,19 +182,17 @@ Nothing outside the app is required to run it in development. For real data:
 
 ## Security notes
 
-- Passwords are hashed with scrypt and a random salt. Login attempts are rate-limited per email.
-- Sessions are HS256 JWTs with issuer, audience and expiry checks. The token is kept in `localStorage` in the browser; use HTTPS and a short expiry in production.
+- The app is single-user and has no sign-in. The API listens on `127.0.0.1` only, so other computers on your network cannot reach it.
+- Do not expose this API to a network or the internet as it is. Adding public access would require real authentication first.
 - Uploads are limited to 5 MB and PDF or DOCX. The file's content must match its extension.
 - Stored files get generated names, and path traversal outside the storage root is rejected.
-- Every query is scoped to the signed-in user. Another user's applications, CVs and documents return 404.
-- Logs redact authorization headers and passwords.
+- Logs redact passwords and authorization headers.
 - The AI prompt receives only the selected CV's facts. Its output is validated before use.
 
 ## Limitations
 
 - Scheduled searches run inside the API process. For several instances, run the scheduler in one of them, or split it out.
 - Notifications appear in the app. Email or push delivery is not implemented.
-- Rate limiting is in memory, which suits one instance.
 - Profile extraction is rule-based. Scanned image PDFs are not supported, and the Profile page is where you correct anything it misses.
 - Re-uploading a CV as the primary one replaces the stored profile with what was extracted from it. Secondary uploads only add skills.
 - Matching is designed around English-language postings.

@@ -100,7 +100,7 @@ const NAV = [
 ];
 
 export function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [notes, setNotes] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
@@ -147,9 +147,6 @@ export function AppLayout() {
             <strong>{user?.name}</strong>
             <span>{user?.email}</span>
           </div>
-          <button className="btn btn-ghost btn-sm" onClick={logout}>
-            Sign out
-          </button>
         </div>
       </aside>
 

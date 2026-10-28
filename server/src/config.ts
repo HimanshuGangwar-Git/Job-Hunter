@@ -28,8 +28,6 @@ const schema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
-  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
-  JWT_EXPIRES_IN_HOURS: z.coerce.number().positive().default(12),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   STORAGE_DIR: z.string().default('./storage'),
 
@@ -66,8 +64,5 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     throw new Error(`Invalid configuration: ${details}`);
   }
   const config = parsed.data;
-  if (config.NODE_ENV === 'production' && config.JWT_SECRET.includes('change-me')) {
-    throw new Error('Invalid configuration: JWT_SECRET must be changed in production');
-  }
   return { ...config, isProduction: config.NODE_ENV === 'production' };
 }

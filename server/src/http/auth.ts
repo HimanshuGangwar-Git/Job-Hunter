@@ -1,7 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AppContext } from '../context';
-import { verifyToken } from '../auth/tokens';
-import { unauthorized } from './errors';
+import { LOCAL_USER_ID } from '../auth/local-user';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -9,19 +8,16 @@ declare module 'fastify' {
   }
 }
 
-/** Builds a preHandler that requires a valid bearer token and exposes the user id on the request. */
-export function requireAuth(ctx: AppContext) {
-  return async function authenticate(request: FastifyRequest, _reply: FastifyReply): Promise<void> {
-    const header = request.headers.authorization ?? '';
-    const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length).trim() : '';
-    if (!token) throw unauthorized();
-    const claims = await verifyToken(token, ctx.config.JWT_SECRET);
-    if (!claims) throw unauthorized('Your session has expired. Please sign in again.');
-    request.userId = claims.sub;
+/**
+ * Single-user mode: every request belongs to the local user. The server listens on 127.0.0.1 (the default HOST),
+ * so only this computer can reach it. Do not expose it to a network without adding real authentication.
+ */
+export function requireAuth(_ctx: AppContext) {
+  return async function attachLocalUser(request: FastifyRequest, _reply: FastifyReply): Promise<void> {
+    request.userId = LOCAL_USER_ID;
   };
 }
 
 export function currentUserId(request: FastifyRequest): string {
-  if (!request.userId) throw unauthorized();
-  return request.userId;
+  return request.userId ?? LOCAL_USER_ID;
 }

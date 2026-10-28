@@ -7,13 +7,12 @@ import { CVs } from './pages/CVs';
 import { Dashboard } from './pages/Dashboard';
 import { JobDetail } from './pages/JobDetail';
 import { Jobs } from './pages/Jobs';
-import { Login } from './pages/Login';
 import { Preferences } from './pages/Preferences';
 import { Profile } from './pages/Profile';
 import { Searches } from './pages/Searches';
 
 export default function App() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -27,8 +26,7 @@ export default function App() {
     <>
       {USE_MOCKS && <div className="mock-banner">Mock data mode: API calls are simulated in the browser.</div>}
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
-        <Route element={user ? <AppLayout /> : <Navigate to="/login" replace />}>
+        <Route element={<AppLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="jobs" element={<Jobs />} />
