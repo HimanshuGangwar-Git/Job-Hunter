@@ -1,0 +1,112 @@
+[
+  {
+    "externalId": "mock-001",
+    "title": "Senior Frontend Engineer",
+    "company": "Northwind Payments",
+    "location": "Bengaluru, India",
+    "workModeHint": "hybrid",
+    "salaryText": "₹30-42 LPA",
+    "description": "<p>Build payment dashboards in <b>React</b> and <b>TypeScript</b>. You will own performance budgets, contribute to the design system and collaborate with backend teams on <b>GraphQL</b> APIs.</p><ul><li>5+ years of frontend experience</li><li>Strong JavaScript, Jest and accessibility (WCAG) knowledge</li></ul>",
+    "url": "https://jobs.example.com/northwind/senior-frontend",
+    "daysAgo": 1
+  },
+  {
+    "externalId": "mock-002",
+    "title": "Frontend Engineer, Analytics",
+    "company": "Blue Harbor Analytics",
+    "location": "Chennai, India",
+    "workModeHint": "hybrid",
+    "salaryText": "₹24-33 LPA",
+    "description": "Create data visualisation features for SaaS analytics products. Work with React, Redux and TypeScript. Experience with Chart.js or D3.js is a plus. 2-4 years of experience.",
+    "url": "https://jobs.example.com/blueharbor/frontend-analytics",
+    "daysAgo": 2
+  },
+  {
+    "externalId": "mock-003",
+    "title": "Full Stack Engineer",
+    "company": "Lumen Cloud",
+    "location": "Remote India",
+    "workModeHint": "remote",
+    "salaryText": "₹26-36 LPA",
+    "description": "Ship features end-to-end across our API tooling. Node.js services, React front-ends and PostgreSQL-backed data models. Docker and AWS experience expected. Kubernetes exposure is a bonus.",
+    "url": "https://jobs.example.com/lumen/full-stack",
+    "daysAgo": 3
+  },
+  {
+    "externalId": "mock-004",
+    "title": "React Developer",
+    "company": "Harbourline Trading",
+    "location": "Bengaluru, India",
+    "workModeHint": "onsite",
+    "salaryText": "₹20-28 LPA",
+    "description": "Build real-time trading interfaces with React. Knowledge of WebSocket streams and Redux is required. Prior experience in fintech preferred.",
+    "url": "https://jobs.example.com/harbourline/react-developer",
+    "daysAgo": 4
+  },
+  {
+    "externalId": "mock-005",
+    "title": "Software Engineer, Frontend Platform",
+    "company": "Acme Fintech",
+    "location": "Pune, India",
+    "workModeHint": "hybrid",
+    "salaryText": "₹22-30 LPA",
+    "description": "Maintain the internal frontend platform, build tooling and shared design tokens. Webpack, Storybook and TypeScript experience required. Degree in Computer Science or equivalent.",
+    "url": "https://jobs.example.com/acme/frontend-platform",
+    "daysAgo": 5
+  },
+  {
+    "externalId": "mock-006",
+    "title": "Associate Product Engineer",
+    "company": "Northstar Retail",
+    "location": "Hyderabad, India",
+    "workModeHint": "onsite",
+    "salaryText": "₹12-16 LPA",
+    "description": "Work on merchandising tools. Requires Python, data pipelines and Tableau alongside front-end work. 1-2 years of experience.",
+    "url": "https://jobs.example.com/northstar/associate-product",
+    "daysAgo": 6
+  },
+  {
+    "externalId": "mock-007",
+    "title": "Backend Engineer, Payments",
+    "company": "Brightcart",
+    "location": "Bengaluru, India",
+    "workModeHint": "hybrid",
+    "salaryText": "₹28-38 LPA",
+    "description": "Design payment services in Java and Kafka with a focus on reliability and distributed systems. 5+ years of backend experience. Bachelor's degree required.",
+    "url": "https://jobs.example.com/brightcart/backend-payments",
+    "daysAgo": 2
+  },
+  {
+    "externalId": "mock-008",
+    "title": "Frontend Developer",
+    "company": "Lumen Health",
+    "location": "Remote",
+    "workModeHint": "remote",
+    "salaryText": "$70k-95k",
+    "description": "Build patient-facing web applications in React and TypeScript. Accessibility and testing with Jest and Cypress. Healthcare domain experience is a strong plus.",
+    "url": "https://jobs.example.com/lumenhealth/frontend-developer",
+    "daysAgo": 8
+  },
+  {
+    "externalId": "mock-009",
+    "title": "Data Engineer",
+    "company": "Orbit Logistics",
+    "location": "Gurugram, India",
+    "workModeHint": "onsite",
+    "salaryText": "₹18-25 LPA",
+    "description": "Own ETL pipelines using Airflow, Spark and Snowflake. Python and SQL required. 3+ years of data engineering experience.",
+    "url": "https://jobs.example.com/orbit/data-engineer",
+    "daysAgo": 3
+  },
+  {
+    "externalId": "mock-010",
+    "title": "Product Designer",
+    "company": "Cedar & Pine Studio",
+    "location": "Bengaluru, India",
+    "workModeHint": "hybrid",
+    "salaryText": "₹16-22 LPA",
+    "description": "Design user flows and high-fidelity prototypes in Figma. Work with engineers on design systems and accessibility.",
+    "url": "https://jobs.example.com/cedarpine/product-designer",
+    "daysAgo": 10
+  }
+]

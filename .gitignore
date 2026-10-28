@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+storage/
+*.log
+.DS_Store
+.embedded-postgres-data/
+web/.vite/
