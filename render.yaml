@@ -3,11 +3,11 @@ services:
     name: job-hunter-api
     runtime: node
     region: singapore
-    plan: starter
+    plan: free
     rootDir: .
     buildCommand: npm install && npm run build -w server
-    preDeployCommand: npm run migrate -w server
-    startCommand: npm start -w server
+    # Free plans do not support preDeployCommand, so migrations run at startup (they are idempotent).
+    startCommand: npm run migrate -w server && npm start -w server
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
